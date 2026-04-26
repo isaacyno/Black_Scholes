@@ -125,6 +125,7 @@ def update_graph(K, r, T, sigma):
         title="Theoretical Option Price vs. Underlying Stock Price",
         xaxis_title="Stock Price (S)",
         yaxis_title="Option Price",
+        yaxis_range=[0,160],
         hovermode="x unified",
         template="plotly_white"
     )
