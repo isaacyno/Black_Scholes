@@ -23,22 +23,81 @@ def black_scholes(S, K, r, T, sigma):
 app.layout = html.Div(style={'fontFamily': 'Arial, sans-serif', 'maxWidth': '800px', 'margin': '0 auto'}, children=[
     html.H1("Black-Scholes Option Pricing Simulator", style={'textAlign': 'center'}),
     
+    # The Math Formulas
+    # The Math Formulas
+    html.Div([
+        dcc.Markdown(
+            r'''
+            ### The Black-Scholes Equation
+
+            $$\frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + rS \frac{\partial V}{\partial S} - rV = 0$$
+            
+            $V$: the price of the option as a function of stock price $S$ and time $t$
+
+            $\sigma$: the volatility of the stock
+
+            $r$: risk-free interest rate
+
+
+            ### Solutions
+            
+            **Call Option Price:**
+            $$C(S,t) = S N(d_1) - K e^{-r(T-t)} N(d_2)$$
+            
+            **Put Option Price:**
+            $$P(S,t) = K e^{-r(T-t)} N(-d_2) - S N(-d_1)$$
+            
+            $$d_1 = \frac{\ln(S/K) + (r + \frac{\sigma^2}{2})(T-t)}{\sigma\sqrt{T-t}}$$
+            
+            $$d_2 = d_1 - \sigma\sqrt{T-t}$$
+            ''',
+            mathjax=True
+        )
+    ], style={
+        'textAlign': 'center', 
+        'padding': '20px', 
+        'backgroundColor': '#ffffff', 
+        'borderRadius': '10px', 
+        'marginBottom': '20px',
+        'boxShadow': '0 2px 4px rgba(0,0,0,0.1)'
+    }),
+
     # The Graph
     dcc.Graph(id='option-graph'),
     
     # The Controls
     html.Div([
         html.Label("Strike Price (K)"),
-        dcc.Slider(id='slider-K', min=50, max=150, step=1, value=100, tooltip={"placement": "bottom", "always_visible": True}),
+        dcc.Slider(
+            id='slider-K', min=50, max=150, step=1, value=100, 
+            marks={i: str(i) for i in range(50, 151, 10)},
+            tooltip={"placement": "bottom", "always_visible": True},
+            updatemode='drag'  # Forces real-time updates while dragging
+        ),
         
         html.Label("Risk-Free Rate (r)"),
-        dcc.Slider(id='slider-r', min=0, max=0.20, step=0.01, value=0.05, tooltip={"placement": "bottom", "always_visible": True}),
+        dcc.Slider(
+            id='slider-r', min=0, max=0.20, step=0.01, value=0.05, 
+            marks={0: '0%', 0.05: '5%', 0.10: '10%', 0.15: '15%', 0.20: '20%'},
+            tooltip={"placement": "bottom", "always_visible": True},
+            updatemode='drag'
+        ),
         
         html.Label("Time to Maturity (T in years)"),
-        dcc.Slider(id='slider-T', min=0.01, max=5.0, step=0.05, value=1.0, tooltip={"placement": "bottom", "always_visible": True}),
+        dcc.Slider(
+            id='slider-T', min=0.01, max=5.0, step=0.01, value=1.0, 
+            marks={i: f"{i} yr" for i in range(0, 6)},
+            tooltip={"placement": "bottom", "always_visible": True},
+            updatemode='drag'
+        ),
         
         html.Label("Volatility (σ)"),
-        dcc.Slider(id='slider-sigma', min=0.01, max=1.0, step=0.01, value=0.20, tooltip={"placement": "bottom", "always_visible": True}),
+        dcc.Slider(
+            id='slider-sigma', min=0.01, max=1.0, step=0.01, value=0.20, 
+            marks={0.2: '0.2', 0.4: '0.4', 0.6: '0.6', 0.8: '0.8', 1.0: '1.0'},
+            tooltip={"placement": "bottom", "always_visible": True},
+            updatemode='drag'
+        ),
     ], style={'padding': '20px', 'backgroundColor': '#f9f9f9', 'borderRadius': '10px'})
 ])
 
