@@ -24,7 +24,6 @@ app.layout = html.Div(style={'fontFamily': 'Arial, sans-serif', 'maxWidth': '800
     html.H1("Black-Scholes Option Pricing Simulator", style={'textAlign': 'center'}),
     
     # The Math Formulas
-    # The Math Formulas
     html.Div([
         dcc.Markdown(
             r'''
@@ -136,17 +135,29 @@ app.clientside_callback(
         }
 
         // Return the Plotly figure dictionary
+        // Return the Plotly figure dictionary
         return {
             'data': [
                 {'x': S, 'y': calls, 'type': 'scatter', 'mode': 'lines', 'name': 'Call Price', 'line': {'color': 'green', 'width': 3}},
                 {'x': S, 'y': puts, 'type': 'scatter', 'mode': 'lines', 'name': 'Put Price', 'line': {'color': 'red', 'width': 3}}
             ],
             'layout': {
-                'title': 'Theoretical Option Price vs. Underlying Stock Price',
-                'xaxis': {'title': 'Stock Price (S)'},
-                'yaxis': {'title': 'Option Price', 'range': [-10, 160]},
+                'title': {
+                    'text': 'Theoretical Option Price vs. Underlying Stock Price',
+                    'font': {'size': 18}
+                },
+                'xaxis': {
+                    'title': {'text': 'Stock Price (S)', 'font': {'size': 14}},
+                    'gridcolor': '#e5e5e5'
+                },
+                'yaxis': {
+                    'title': {'text': 'Option Price', 'font': {'size': 14}},
+                    'range': [0, 150],
+                    'gridcolor': '#e5e5e5'
+                },
                 'hovermode': 'x unified',
-                'template': 'plotly_white'
+                'plot_bgcolor': '#ffffff',
+                'paper_bgcolor': '#ffffff'
             }
         };
     }
