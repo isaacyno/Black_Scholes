@@ -101,14 +101,63 @@ app.layout = html.Div(style={'fontFamily': 'Arial, sans-serif', 'maxWidth': '800
     ], style={'padding': '20px', 'backgroundColor': '#f9f9f9', 'borderRadius': '10px'})
 ])
 
-# The Callback (Updates the graph when sliders move)
-@app.callback(
+app.clientside_callback(
+    """
+    function(K, r, T, sigma) {
+        // Create the X-axis array (Stock Prices 1 to 200)
+        let S = [];
+        for (let i = 1; i <= 200; i++) {
+            S.push(i);
+        }
+
+        // Helper function for the Normal CDF (Approximation)
+        function normCDF(x) {
+            let t = 1 / (1 + 0.2316419 * Math.abs(x));
+            let d = 0.3989423 * Math.exp(-x * x / 2);
+            let p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+            return x > 0 ? 1 - p : p;
+        }
+
+        // Arrays to hold the Y-axis results
+        let calls = [];
+        let puts = [];
+
+        // Calculate Black-Scholes for every point
+        let time = Math.max(T, 0.0000000001); // Prevent division by zero
+        for (let i = 0; i < S.length; i++) {
+            let d1 = (Math.log(S[i] / K) + (r + 0.5 * sigma * sigma) * time) / (sigma * Math.sqrt(time));
+            let d2 = d1 - sigma * Math.sqrt(time);
+            
+            let call = S[i] * normCDF(d1) - K * Math.exp(-r * time) * normCDF(d2);
+            let put = K * Math.exp(-r * time) * normCDF(-d2) - S[i] * normCDF(-d1);
+            
+            calls.push(call);
+            puts.push(put);
+        }
+
+        // Return the Plotly figure dictionary
+        return {
+            'data': [
+                {'x': S, 'y': calls, 'type': 'scatter', 'mode': 'lines', 'name': 'Call Price', 'line': {'color': 'green', 'width': 3}},
+                {'x': S, 'y': puts, 'type': 'scatter', 'mode': 'lines', 'name': 'Put Price', 'line': {'color': 'red', 'width': 3}}
+            ],
+            'layout': {
+                'title': 'Theoretical Option Price vs. Underlying Stock Price',
+                'xaxis': {'title': 'Stock Price (S)'},
+                'yaxis': {'title': 'Option Price', 'range': [-10, 160]},
+                'hovermode': 'x unified',
+                'template': 'plotly_white'
+            }
+        };
+    }
+    """,
     Output('option-graph', 'figure'),
     [Input('slider-K', 'value'),
      Input('slider-r', 'value'),
      Input('slider-T', 'value'),
      Input('slider-sigma', 'value')]
 )
+
 def update_graph(K, r, T, sigma):
     # X-axis: Stock prices from 1 to 200
     S = np.linspace(1, 200, 200)
@@ -125,7 +174,7 @@ def update_graph(K, r, T, sigma):
         title="Theoretical Option Price vs. Underlying Stock Price",
         xaxis_title="Stock Price (S)",
         yaxis_title="Option Price",
-        yaxis_range=[0,160],
+        yaxis_range=[-10,160],
         hovermode="x unified",
         template="plotly_white"
     )
