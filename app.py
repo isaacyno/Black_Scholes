@@ -37,6 +37,8 @@ app.layout = html.Div(style={'fontFamily': 'Arial, sans-serif', 'maxWidth': '800
 
             $r$: risk-free interest rate
 
+            $K$: strike price
+
 
             ### Solutions
             
@@ -82,7 +84,7 @@ app.layout = html.Div(style={'fontFamily': 'Arial, sans-serif', 'maxWidth': '800
             updatemode='drag'
         ),
         
-        html.Label("Time to Maturity (T in years)"),
+        html.Label("Time to Maturity (T-t, in years)"),
         dcc.Slider(
             id='slider-T', min=0.01, max=5.0, step=0.01, value=1.0, 
             marks={i: f"{i} yr" for i in range(0, 6)},
@@ -152,7 +154,7 @@ app.clientside_callback(
                 },
                 'yaxis': {
                     'title': {'text': 'Option Price', 'font': {'size': 14}},
-                    'range': [0, 150],
+                    'range': [-10, 160],
                     'gridcolor': '#e5e5e5'
                 },
                 'hovermode': 'x unified',
