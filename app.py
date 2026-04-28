@@ -39,7 +39,8 @@ app.layout = html.Div(style={'fontFamily': 'Arial, sans-serif', 'maxWidth': '800
 
             $K$: strike price
 
-
+            $T$: expiration/maturity date
+            
             ### Solutions
             
             **Call Option Price:**
